@@ -19,8 +19,6 @@ public class Module {
 
     @Override
     public String toString() {
-        return "Module{" +
-                "libelle='" + libelle + '\'' +
-                '}';
+        return "Module de cette semester " + libelle + '.';
     }
 }

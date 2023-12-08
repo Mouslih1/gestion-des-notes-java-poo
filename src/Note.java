@@ -36,10 +36,8 @@ public class Note {
 
     @Override
     public String toString() {
-        return "Note{" +
-                "idEtudiant=" + nameEtudiant +
-                ", valeur=" + valeur +
-                ", libelle='" + libelle + '\'' +
-                '}';
+        return "L'étudiant qui s'appele " + nameEtudiant +
+                " avec la note " + valeur +
+                ", concerne le module de '" + libelle + ".";
     }
 }

@@ -18,8 +18,6 @@ public class Etudiant {
 
     @Override
     public String toString() {
-        return "Etudiant{" +
-                "name='" + name + '\'' +
-                '}';
+        return "L'étudiant s'appele " + name + '.';
     }
 }
