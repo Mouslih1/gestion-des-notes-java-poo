@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public interface InterfaceGestionNote {
@@ -9,8 +8,8 @@ public interface InterfaceGestionNote {
     void showEtudiant();
     void showNote();
     void showModule();
-    double MoyenParModule(String name,String libelle);
-    void MoyenGeneral(String name);
+    double MoyenParModule(String nameEtduiant,String libelle);
+    double MoyenGeneral(String nameEtduiant);
     void saveEtudiant();
     void saveNote() throws FileNotFoundException;
     void saveModule();

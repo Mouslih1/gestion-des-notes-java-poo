@@ -7,7 +7,7 @@ public class Main {
         gestionNoteController gestionNoteController = new gestionNoteController();
         Scanner scanner = new Scanner(System.in);
         gestionNoteController.getEtudiants();
-        //gestionNoteController.getModules();
+        gestionNoteController.getModules();
         gestionNoteController.getNotes();
 
         while (true)
@@ -25,7 +25,7 @@ public class Main {
              switch (choix)
              {
                  case 0:
-                     System.out.println("Good Bye, Vous étez quiter le programme !");
+                     System.out.println("Good Bye, Vous avez quitter le programme !");
                      gestionNoteController.saveEtudiant();
                      gestionNoteController.saveNote();
                      gestionNoteController.saveModule();
@@ -53,13 +53,11 @@ public class Main {
                  case 6:
                      System.out.println("Enter le nom d'etudiant :");
                      String nameEtudiant = scanner.next();
-                     gestionNoteController.MoyenGeneral(nameEtudiant);
+                     System.out.println(gestionNoteController.MoyenGeneral(nameEtudiant));
                      break;
                  default:
                      System.out.println("Votre choix est incorrect");
-
              }
          }
-
     }
 }
