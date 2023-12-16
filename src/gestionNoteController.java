@@ -1,7 +1,9 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public class gestionNoteController implements InterfaceGestionNote {
     ArrayList<Etudiant> etudiants;
@@ -11,42 +13,37 @@ public class gestionNoteController implements InterfaceGestionNote {
     Scanner scanner;
 
     public gestionNoteController() {
-        etudiants = new ArrayList<Etudiant>();
-        modules = new ArrayList<Module>();
-        notes = new ArrayList<Note>();
+        etudiants = new ArrayList<>();
+        modules = new ArrayList<>();
+        notes = new ArrayList<>();
         scanner = new Scanner(System.in);
     }
 
     @Override
-    public void addEtudiant() {
+    public void addEtudiant()
+    {
         System.out.println("Enter your NAME:");
         String name = scanner.next();
-        boolean exists = false;
-        for (Etudiant e : etudiants) {
-            if (e.getName().equals(name)) {
-                exists = true;
-                break;
-            }
-        }
 
-        if (exists) {
-            System.out.println("Enter etudiant LIBELLE:");
-            String libelleModule = scanner.next();
-            System.out.println("Enter le nombre des modules tu veux saisie:");
+        boolean exists = etudiants.stream().anyMatch(e -> e.getName().equals(name));
+
+        System.out.println("Enter module LIBELLE:");
+        String libelleModule = scanner.next();
+
+        if (exists)
+        {
+            System.out.println("Enter le nombre des notes tu veux saisie pour cette module:");
             int nombreModule = scanner.nextInt();
-            for (int i = 1; i <= nombreModule; i++) {
-                addNote(name, libelleModule);
-            }
+
+            IntStream.rangeClosed(1, nombreModule).forEach(i -> addNote(name, libelleModule));
         } else {
-            System.out.println("Enter etudiant LIBELLE:");
-            String libelleModule = scanner.next();
             Etudiant etudiant = new Etudiant(name);
             etudiants.add(etudiant);
-            System.out.println("Enter le nombre des note tu veux saisie:");
+
+            System.out.println("Enter le nombre des note tu veux saisie pour cette module:");
             int nombreModule = scanner.nextInt();
-            for (int i = 1; i <= nombreModule; i++) {
-                addNote(name, libelleModule);
-            }
+
+            IntStream.rangeClosed(1, nombreModule).forEach(i -> addNote(name, libelleModule));
         }
     }
 
@@ -55,31 +52,20 @@ public class gestionNoteController implements InterfaceGestionNote {
         String libelle = addModule(libelleModule);
         System.out.println("Enter etudiant NOTE:");
         double valeur = scanner.nextDouble();
-        if (valeur >= 0 && valeur <= 20) {
-            Note note = new Note(nameEtudiant, valeur, libelle);
-            notes.add(note);
-        } else {
-            System.out.println("La note doit étre entre 0 et 20 !");
-            System.exit(0);
-        }
+        Optional.of(valeur).filter(v -> v >= 0 && v <= 20).map(v -> new Note(nameEtudiant, v, libelle))
+                .ifPresent(notes::add);
     }
 
     @Override
-    public String addModule(String libelle) {
-        boolean exists = false;
-        for (Module m : modules) {
-            if (m.getLibelle().equals(libelle)) {
-                exists = true;
-                break;
-            }
-        }
-
-        if (exists) {
-            for (Module m : modules) {
-                if (m.getLibelle().equals(libelle)) {
-                    libelle = m.getLibelle();
-                }
-            }
+    public String addModule(String libelle)
+    {
+        String finalLibelle = libelle;
+        boolean exists = modules.stream()
+                .anyMatch(m -> m.getLibelle().equals(finalLibelle));
+        if (exists)
+        {
+            libelle = modules.stream().filter(m -> m.getLibelle().equals(finalLibelle)).findFirst()
+                    .map(Module::getLibelle).orElse(finalLibelle);
         } else {
             Module module = new Module(libelle);
             modules.add(module);
@@ -90,21 +76,22 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public void showEtudiant() {
         if (!etudiants.isEmpty()) {
-            for (Etudiant e : etudiants) {
+           /* for (Etudiant e : etudiants) {
                 System.out.println(e.toString());
-            }
+            }*/
+            etudiants.forEach(e -> System.out.println(e.toString()));
         } else {
             System.out.println("La liste des étudiants est vide !");
         }
-
     }
 
     @Override
     public void showNote() {
         if (!notes.isEmpty()) {
-            for (Note note : notes) {
+          /*  for (Note note : notes) {
                 System.out.println(note.toString());
-            }
+            }*/
+            notes.forEach(n -> System.out.println(n.toString()));
         } else {
             System.out.println("la liste des notes est vide !");
         }
@@ -113,43 +100,40 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public void showModule() {
         if (!modules.isEmpty()) {
-            for (Module module : modules) {
+           /* for (Module module : modules) {
                 System.out.println(module.toString());
-            }
+            }*/
+            modules.forEach(m -> System.out.println(m.toString()));
         } else {
             System.out.println("la liste des modules est vide !");
         }
     }
 
     @Override
-    public double MoyenParModule(String name, String libelle) {
-        double sum = 0;
-        double result = 0;
+    public double MoyenParModule(String name, String libelle)
+    {
+      /*  double sum = 0;
 
         int counter = 0;
         for (Note n : notes) {
             if (n.getLibelle().equals(libelle) && n.getnameEtudiant().equals(name)) {
                 counter++;
                 sum += n.getValeur();
-                result = sum;
             }
         }
 
-        return result / counter;
+        return sum / counter;*/
+
+        return notes.stream().filter(n -> n.getLibelle().equals(libelle) && n.getnameEtudiant().equals(name))
+                .mapToDouble(Note::getValeur)
+                .average()
+                .orElse(0.0);
     }
 
     @Override
-    public void MoyenGeneral(String name) {
-        int counter = 0;
-        double sum = 0.0;
-        for (Note n : notes) {
-            if (n.getnameEtudiant().equals(name)) {
-                counter++;
-                sum += MoyenParModule(name, n.getLibelle());
-            }
-        }
-        double result = sum / counter;
-        System.out.println(result);
+    public double MoyenGeneral(String name)
+    {
+        return notes.stream().filter(n -> n.getnameEtudiant().equals(name)).mapToDouble(n -> MoyenParModule(name,n.getLibelle())).average().orElse(0.0);
     }
 
     @Override

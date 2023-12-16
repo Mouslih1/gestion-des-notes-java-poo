@@ -19,6 +19,6 @@ public class Module {
 
     @Override
     public String toString() {
-        return "Module de cette semester " + libelle + '.';
+        return "Module de cet semesttre " + libelle + '.';
     }
 }
