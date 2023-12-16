@@ -75,10 +75,8 @@ public class gestionNoteController implements InterfaceGestionNote {
 
     @Override
     public void showEtudiant() {
-        if (!etudiants.isEmpty()) {
-           /* for (Etudiant e : etudiants) {
-                System.out.println(e.toString());
-            }*/
+        if (!etudiants.isEmpty())
+        {
             etudiants.forEach(e -> System.out.println(e.toString()));
         } else {
             System.out.println("La liste des étudiants est vide !");
@@ -88,9 +86,6 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public void showNote() {
         if (!notes.isEmpty()) {
-          /*  for (Note note : notes) {
-                System.out.println(note.toString());
-            }*/
             notes.forEach(n -> System.out.println(n.toString()));
         } else {
             System.out.println("la liste des notes est vide !");
@@ -100,9 +95,6 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public void showModule() {
         if (!modules.isEmpty()) {
-           /* for (Module module : modules) {
-                System.out.println(module.toString());
-            }*/
             modules.forEach(m -> System.out.println(m.toString()));
         } else {
             System.out.println("la liste des modules est vide !");
@@ -112,18 +104,6 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public double MoyenParModule(String name, String libelle)
     {
-      /*  double sum = 0;
-
-        int counter = 0;
-        for (Note n : notes) {
-            if (n.getLibelle().equals(libelle) && n.getnameEtudiant().equals(name)) {
-                counter++;
-                sum += n.getValeur();
-            }
-        }
-
-        return sum / counter;*/
-
         return notes.stream().filter(n -> n.getLibelle().equals(libelle) && n.getnameEtudiant().equals(name))
                 .mapToDouble(Note::getValeur)
                 .average()
