@@ -1,3 +1,5 @@
+package Module;
+
 import java.util.ArrayList;
 
 public class Etudiant {
@@ -18,6 +20,8 @@ public class Etudiant {
 
     @Override
     public String toString() {
-        return "L'étudiant s'appele " + name + '.';
+        return "Etudiant{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

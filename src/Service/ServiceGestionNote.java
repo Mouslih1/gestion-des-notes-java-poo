@@ -1,18 +1,35 @@
+package Service;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import java.util.Scanner;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
-public class gestionNoteController implements InterfaceGestionNote {
+import Module.Etudiant;
+import Module.Module;
+import Module.Note;
+
+public class ServiceGestionNote implements InterfaceServiceGestionNote {
     ArrayList<Etudiant> etudiants;
     ArrayList<Module> modules;
 
     ArrayList<Note> notes;
     Scanner scanner;
 
-    public gestionNoteController() {
+    public static final String PURPLE = "\033[0;35m";
+    public static final String PURPLE_BOLD_BRIGHT = "\033[1;95m";
+    public static final String GREEN = "\033[0;32m";
+    public static final String RED_BOLD_BRIGHT = "\033[1;91m";
+    public static final String RED = "\033[0;31m";
+    public static final String GREEN_BOLD_BRIGHT = "\033[1;92m";
+    public static final String YELLOW_BOLD_BRIGHT = "\033[1;93m";
+
+
+    public ServiceGestionNote() {
         etudiants = new ArrayList<>();
         modules = new ArrayList<>();
         notes = new ArrayList<>();
@@ -22,82 +39,113 @@ public class gestionNoteController implements InterfaceGestionNote {
     @Override
     public void addEtudiant()
     {
-        System.out.println("Enter your NAME:");
+        System.out.print(PURPLE_BOLD_BRIGHT + "ENTER  ");
+        System.out.println(PURPLE + "student name:");
         String name = scanner.next();
 
         boolean exists = etudiants.stream().anyMatch(e -> e.getName().equals(name));
 
-        System.out.println("Enter module LIBELLE:");
-        String libelleModule = scanner.next();
-
-        if (exists)
+        if(exists)
         {
-            System.out.println("Enter le nombre des notes tu veux saisie pour cette module:");
-            int nombreModule = scanner.nextInt();
-
-            IntStream.rangeClosed(1, nombreModule).forEach(i -> addNote(name, libelleModule));
-        } else {
+            System.out.print("\n");
+            System.out.println(YELLOW_BOLD_BRIGHT + "Student already exist !");
+            System.out.println(PURPLE + "You want add note for this student y/n");
+            String b = scanner.next();
+            while (b.equals("y"))
+            {
+                System.out.print(PURPLE_BOLD_BRIGHT + "ENTER  ");
+                System.out.println(PURPLE + "module libelle:");
+                String libelleModule = scanner.next();
+                addModule(libelleModule);
+                addNote(name, libelleModule);
+            }
+        }else{
             Etudiant etudiant = new Etudiant(name);
             etudiants.add(etudiant);
-
-            System.out.println("Enter le nombre des note tu veux saisie pour cette module:");
-            int nombreModule = scanner.nextInt();
-
-            IntStream.rangeClosed(1, nombreModule).forEach(i -> addNote(name, libelleModule));
+            System.out.print("\n");
+            System.out.print(GREEN + "SUCCESS -> ");
+            System.out.println(GREEN_BOLD_BRIGHT + "Student has been added successfully");
+            System.out.println(PURPLE + "You want add note for this student y/n");
+            String b = scanner.next();
+            while (b.equals("y"))
+            {
+                System.out.print("\n");
+                System.out.print(PURPLE_BOLD_BRIGHT + "ENTER  ");
+                System.out.println(PURPLE + "module libelle:");
+                String libelleModule = scanner.next();
+                addModule(libelleModule);
+                addNote(name, libelleModule);
+                System.out.println(PURPLE + "You want add note for another module for this student y/n");
+                b = scanner.next();
+            }
         }
     }
 
     @Override
-    public void addNote(String nameEtudiant, String libelleModule) {
-        String libelle = addModule(libelleModule);
-        System.out.println("Enter etudiant NOTE:");
-        double valeur = scanner.nextDouble();
-        Optional.of(valeur).filter(v -> v >= 0 && v <= 20).map(v -> new Note(nameEtudiant, v, libelle))
-                .ifPresent(notes::add);
+    public void addNote(String nameEtudiant,String libelleModule)
+    {
+        System.out.print(PURPLE_BOLD_BRIGHT + "ENTER  ");
+        System.out.println(PURPLE + "nombre note you want enter for this module:");
+        int nombreNote  = scanner.nextInt();
+        for (int i = 1; i <= nombreNote; i++)
+        {
+            System.out.print(PURPLE_BOLD_BRIGHT + "ENTER  ");
+            System.out.println(PURPLE + "student notes:");
+            double valeur = scanner.nextDouble();
+            if(valeur >= 0 && valeur <= 20)
+            {
+                Note note = new Note(nameEtudiant,valeur,libelleModule);
+                notes.add(note);
+            }
+        }
     }
 
     @Override
-    public String addModule(String libelle)
+    public void addModule(String libelle)
     {
-        String finalLibelle = libelle;
         boolean exists = modules.stream()
-                .anyMatch(m -> m.getLibelle().equals(finalLibelle));
+                .anyMatch(m -> m.getLibelle().equals(libelle));
         if (exists)
         {
-            libelle = modules.stream().filter(m -> m.getLibelle().equals(finalLibelle)).findFirst()
-                    .map(Module::getLibelle).orElse(finalLibelle);
+            System.out.println(YELLOW_BOLD_BRIGHT + "Module already exist !");
         } else {
             Module module = new Module(libelle);
             modules.add(module);
+            System.out.print("\n");
+            System.out.print(GREEN + "SUCCESS -> ");
+            System.out.println(GREEN_BOLD_BRIGHT + "Module has been added successfully");
         }
-        return libelle;
     }
 
     @Override
-    public void showEtudiant() {
+    public void showEtudiants()
+    {
         if (!etudiants.isEmpty())
         {
             etudiants.forEach(e -> System.out.println(e.toString()));
         } else {
-            System.out.println("La liste des étudiants est vide !");
+            System.out.print("\n");
+            System.out.println(YELLOW_BOLD_BRIGHT + "La liste des étudiants est vide !");
         }
     }
 
     @Override
-    public void showNote() {
+    public void showNotes() {
         if (!notes.isEmpty()) {
             notes.forEach(n -> System.out.println(n.toString()));
         } else {
-            System.out.println("la liste des notes est vide !");
+            System.out.print("\n");
+            System.out.println(YELLOW_BOLD_BRIGHT + "la liste des notes est vide !");
         }
     }
 
     @Override
-    public void showModule() {
+    public void showModules() {
         if (!modules.isEmpty()) {
             modules.forEach(m -> System.out.println(m.toString()));
         } else {
-            System.out.println("la liste des modules est vide !");
+            System.out.print("\n");
+            System.out.println(YELLOW_BOLD_BRIGHT + "la liste des modules est vide !");
         }
     }
 
@@ -117,7 +165,7 @@ public class gestionNoteController implements InterfaceGestionNote {
     }
 
     @Override
-    public void saveEtudiant()
+    public void transferInTxtEtudiants()
     {
         try{
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("etudiantFile.txt"), StandardCharsets.UTF_8));
@@ -130,16 +178,14 @@ public class gestionNoteController implements InterfaceGestionNote {
                 bufferedWriter.newLine();
             }
 
-            System.out.println("Etudiant data enregistrer avec success dans le fishier txt");
             bufferedWriter.flush();
             bufferedWriter.close();
         }catch (IOException ignored){
-
         }
     }
 
     @Override
-    public void saveNote()
+    public void transferInTxtNotes()
     {
         try{
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("noteFile.txt"), StandardCharsets.UTF_8));
@@ -154,7 +200,6 @@ public class gestionNoteController implements InterfaceGestionNote {
                 bufferedWriter.newLine();
             }
 
-            System.out.println("Note data enregister avec success dans le fishier");
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (IOException ignored) {
@@ -162,7 +207,7 @@ public class gestionNoteController implements InterfaceGestionNote {
     }
 
     @Override
-    public void saveModule()
+    public void transferInTxtModules()
     {
         try{
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("moduleFile.txt"),StandardCharsets.UTF_8));
@@ -175,7 +220,6 @@ public class gestionNoteController implements InterfaceGestionNote {
                 bufferedWriter.newLine();
             }
 
-            System.out.println("Modules data enregistrer avec success dans le fichier");
             bufferedWriter.flush();
             bufferedWriter.close();
         }catch (IOException ignored){
@@ -184,7 +228,7 @@ public class gestionNoteController implements InterfaceGestionNote {
     }
 
     @Override
-    public ArrayList<Etudiant> getEtudiants(){
+    public ArrayList<Etudiant> saveInTxtEtudiants(){
         String line;
         try{
             FileReader fileReader = new FileReader("etudiantFile.txt");
@@ -204,7 +248,7 @@ public class gestionNoteController implements InterfaceGestionNote {
     }
 
     @Override
-    public ArrayList<Module> getModules() {
+    public ArrayList<Module> saveInTxtModules() {
         try{
             String line;
             FileReader fileReader = new FileReader("moduleFile.txt");
@@ -224,7 +268,7 @@ public class gestionNoteController implements InterfaceGestionNote {
     }
 
     @Override
-    public ArrayList<Note> getNotes()
+    public ArrayList<Note> saveInTxtNotes()
     {
         String line;
         try{

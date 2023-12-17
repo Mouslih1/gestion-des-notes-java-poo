@@ -1,3 +1,5 @@
+package Module;
+
 import java.util.ArrayList;
 
 public class Module {
@@ -19,6 +21,8 @@ public class Module {
 
     @Override
     public String toString() {
-        return "Module de cet semesttre " + libelle + '.';
+        return "Module{" +
+                "libelle='" + libelle + '\'' +
+                '}';
     }
 }

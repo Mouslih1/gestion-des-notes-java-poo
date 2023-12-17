@@ -1,3 +1,5 @@
+package Module;
+
 public class Note {
     private String nameEtudiant;
     private double valeur;
@@ -36,8 +38,10 @@ public class Note {
 
     @Override
     public String toString() {
-        return "L'étudiant qui s'appele " + nameEtudiant +
-                " avec la note " + valeur +
-                ", concerne le module de '" + libelle + ".";
+        return "Note{" +
+                "nameEtudiant='" + nameEtudiant + '\'' +
+                ", valeur=" + valeur +
+                ", libelle='" + libelle + '\'' +
+                '}';
     }
 }
